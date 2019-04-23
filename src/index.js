@@ -22,6 +22,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.display_name = '';
+    this.topTracks = [];
     this.state = {
       authenticated: false,
       category: 0,
@@ -59,6 +60,18 @@ class App extends React.Component {
         }
     })
 
+      await this.spotifyClient.getMyTopTracks(null, (err, val) => {
+        if (!err) {
+          var i; 
+          for (i = 0; i < 20; i++) {
+            this.topTracks.push(val.items[i].id)
+          }
+          console.log(this.topTracks)
+        } else {
+          console.log(err)
+        }
+      })
+
     }
   }
 
@@ -90,21 +103,21 @@ class App extends React.Component {
         }
     });
   }
-
+ 
   async searchArtists() {
-    console.log("search");
     const letter = this.display_name.substring(0, 1);
     console.log(letter)
-    await this.spotifyClient.searchArtists(letter, null, (err, val) => {
+    await this.spotifyClient.searchArtists(letter, {limit:50}, (err, val) => {
         if (!err) {
             const artistsArr = [];
             var i;
-            for (i = 0; i < 20; i++) {
+            for (i = 0; i < 50; i++) {
                 let artistLetter = val.artists.items[i].name.substring(0,1).toLowerCase();
                 let letterLetter = letter.toLowerCase();
                 if (artistLetter === letterLetter) {
                     console.log("yes");
                     console.log(artistLetter);
+                    console.log(val.artists.items[i].popularity)
                     artistsArr.push(val.artists.items[i].name);
                 } else {
                     console.log("no");
@@ -113,6 +126,19 @@ class App extends React.Component {
             console.log(artistsArr);
         } else {
             console.log(err);
+        }
+    })
+  }
+
+  async musicalKey() {
+    await this.spotifyClient.getAudioFeaturesForTracks(this.topTracks, (err, val) => {
+        if (!err) {
+            console.log(val)
+            console.log('hi')
+
+        } else {
+            console.log(err);
+            console.log('hi')
         }
     })
   }
@@ -157,6 +183,7 @@ class App extends React.Component {
       <div className="ui container">
         <button onClick={() => this.getArtists()}>Get Artists You Should Marry</button>
         <button onClick={() => this.searchArtists()}>Artists With The Same First Letter Of Name</button>
+        <button onClick={() => this.musicalKey()}>Musical Key</button>
         <button onClick={() => this.searchArtists()}>Songs You’ve Listened To That Are A Prime Number Of Seconds In Length</button>
 
         <form className="ui form" onSubmit={this.onSubmit}>
