@@ -97,7 +97,7 @@ class App extends React.Component {
     console.log(letter)
     await this.spotifyClient.searchArtists(letter, null, (err, val) => {
         if (!err) {
-            const artistsArr = [];
+            var artistsArr = [];
             var i;
             for (i = 0; i < 20; i++) {
                 let artistLetter = val.artists.items[i].name.substring(0,1).toLowerCase();
@@ -120,7 +120,18 @@ class App extends React.Component {
   async searchPrime() {
     await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
         if (!err) {
-            console.log(val);
+            var primeSongs = [];
+            var i;
+            for (i = 0; i < val.total; i++) {
+                var songLength = Math.round(val.items[i].duration_ms / 1000);
+                if (this.isPrime(songLength)) {
+                    primeSongs.push({songName: val.items[i].name, songLength: songLength});
+                }
+                if (primeSongs.length >= 5) {
+                    break;
+                }
+            }
+            console.log(primeSongs);
         } else {
             console.log(err);
         }
@@ -137,6 +148,25 @@ class App extends React.Component {
           }
       }
       return prime;
+  }
+
+  async howExplicit() {
+    var count = 0;
+    await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
+        if (!err) {
+            // console.log(val);
+            var i;
+            for (i = 0; i < 50; i++) {
+                if (val.items[i].explicit) {
+                    count++;
+                }
+            }
+            console.log("Explicit level: " + count*2 + "%");
+        } else {
+            console.log(err);
+        }
+    })
+
   }
 
   render() {
@@ -157,7 +187,8 @@ class App extends React.Component {
       <div className="ui container">
         <button onClick={() => this.getArtists()}>Get Artists You Should Marry</button>
         <button onClick={() => this.searchArtists()}>Artists With The Same First Letter Of Name</button>
-        <button onClick={() => this.searchArtists()}>Songs You’ve Listened To That Are A Prime Number Of Seconds In Length</button>
+        <button onClick={() => this.searchPrime()}>Prime Songs</button>
+        <button onClick={() => this.howExplicit()}>How Explicit</button>
 
         <form className="ui form" onSubmit={this.onSubmit}>
           <input
