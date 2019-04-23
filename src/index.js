@@ -117,6 +117,27 @@ class App extends React.Component {
     })
   }
 
+  async searchPrime() {
+    await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
+        if (!err) {
+            console.log(val);
+        } else {
+            console.log(err);
+        }
+    })
+  }
+
+  isPrime(num) {
+    var sqrtnum=Math.floor(Math.sqrt(num));
+      var prime = num != 1;
+      for(var i=2; i<sqrtnum+1; i++) {
+          if(num % i == 0) {
+              prime = false;
+              break;
+          }
+      }
+      return prime;
+  }
 
   render() {
     if (!this.state.authenticated) {
@@ -136,6 +157,7 @@ class App extends React.Component {
       <div className="ui container">
         <button onClick={() => this.getArtists()}>Get Artists You Should Marry</button>
         <button onClick={() => this.searchArtists()}>Artists With The Same First Letter Of Name</button>
+        <button onClick={() => this.searchArtists()}>Songs You’ve Listened To That Are A Prime Number Of Seconds In Length</button>
 
         <form className="ui form" onSubmit={this.onSubmit}>
           <input
