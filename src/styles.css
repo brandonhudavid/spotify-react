@@ -3,3 +3,15 @@
     text-align: center;
   }
   
+  .arrow {
+    position: absolute;
+    top: 50vh;
+  }
+
+  .left {
+    left: 5vw;
+  }
+
+  .right {
+    right: 5vw;
+  }
