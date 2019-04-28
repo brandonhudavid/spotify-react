@@ -15,8 +15,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import Spotify from "spotify-web-api-js";
+import LabelElement from "./LabelElement";
 
 import "./styles.css";
+import { bigIntLiteral } from "@babel/types";
 
 class App extends React.Component {
   constructor(props) {
@@ -25,11 +27,12 @@ class App extends React.Component {
     this.topTracks = [];
     this.state = {
       authenticated: false,
-      category: 0,
+      category: 2,
       songs: [],
       isPlaying: false,
       search: "",
-      currentDevice: ""
+      currentDevice: "",
+      results: []
     };
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -71,7 +74,15 @@ class App extends React.Component {
           console.log(err)
         }
       })
+      this.renderCategory();
+    }
+  }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.category !== prevState.category) {
+      console.log("current state category: " + this.state.category + "; prev: " + prevState.category);
+      console.log("time to update!");
+      this.renderCategory(this.state.category);
     }
   }
 
@@ -93,18 +104,24 @@ class App extends React.Component {
   }
 
 
-  async getArtists() {
+  async artistsToMarry() {
     console.log("getArtists");
-    await this.spotifyClient.getMyTopArtists(null, (err, val) => {
+    await this.spotifyClient.getMyTopArtists({limit:5}, (err, val) => {
         if (!err) {
-            console.log(val);
+          var artists = [];
+          for (var i=0; i < val.items.length; i++) {
+            artists.push(val.items[i].name);
+          }
+          this.setState({
+            results: artists
+          });
         } else {
             console.log(err);
         }
     });
   }
  
-  async searchArtists() {
+  async artistLetters() {
     const letter = this.display_name.substring(0, 1);
     console.log(letter)
     await this.spotifyClient.searchArtists(letter, {limit:50}, (err, val) => {
@@ -115,15 +132,15 @@ class App extends React.Component {
                 let artistLetter = val.artists.items[i].name.substring(0,1).toLowerCase();
                 let letterLetter = letter.toLowerCase();
                 if (artistLetter === letterLetter) {
-                    console.log("yes");
-                    console.log(artistLetter);
-                    console.log(val.artists.items[i].popularity)
                     artistsArr.push(val.artists.items[i].name);
-                } else {
-                    console.log("no");
+                    if (artistsArr.length == 5) {
+                      break;
+                    }
                 }
             }
-            console.log(artistsArr);
+            this.setState({
+              results: artistsArr
+            })
         } else {
             console.log(err);
         }
@@ -151,13 +168,15 @@ class App extends React.Component {
             for (i = 0; i < val.total; i++) {
                 var songLength = Math.round(val.items[i].duration_ms / 1000);
                 if (this.isPrime(songLength)) {
-                    primeSongs.push({songName: val.items[i].name, songLength: songLength});
+                  primeSongs.push([val.items[i].name, songLength])
                 }
                 if (primeSongs.length >= 5) {
                     break;
                 }
             }
-            console.log(primeSongs);
+            this.setState({
+              results: primeSongs
+            })
         } else {
             console.log(err);
         }
@@ -187,12 +206,52 @@ class App extends React.Component {
                     count++;
                 }
             }
-            console.log("Explicit level: " + count*2 + "%");
+            this.setState({
+              results: [count*2]
+            })
         } else {
             console.log(err);
         }
     })
+  }
 
+  testRender(x) {
+    if (x != 0) {
+      return (
+        <div>
+          This is a test. X does not = 0.
+        </div>
+      )
+    }
+      return (
+        <div>
+          This is a test. X does not = 0.
+        </div>
+      )
+  }
+
+  renderResults() {
+    return (<ul>{this.state.results.map(result =>
+    <li>{result}</li>)}</ul>)
+  }
+
+  renderCategory(num) {
+    switch(num) {
+      case 1:
+        this.artistsToMarry();
+        break;
+      case 2:
+        this.artistLetters();
+        break;
+      case 3:
+        this.searchPrime();
+        break;
+      case 4:
+        this.howExplicit();
+        break;
+      default:
+        break;
+    }
   }
 
   render() {
@@ -209,10 +268,9 @@ class App extends React.Component {
       );
     }
     return (
-        
       <div className="ui container">
-        <button onClick={() => this.getArtists()}>Get Artists You Should Marry</button>
-        <button onClick={() => this.searchArtists()}>Artists With The Same First Letter Of Name</button>
+        <button onClick={() => this.artistsToMarry()}>Get Artists You Should Marry</button>
+        <button onClick={() => this.artistLetters()}>Artists With The Same First Letter Of Name</button>
         <button onClick={() => this.musicalKey()}>Musical Key</button>
         <button onClick={() => this.searchArtists()}>Songs You’ve Listened To That Are A Prime Number Of Seconds In Length</button>
         <button onClick={() => this.searchPrime()}>Prime Songs</button>
@@ -225,7 +283,30 @@ class App extends React.Component {
           />
           <input type="submit" value="Search" />
         </form>
-        <div className="ui container six column grid">
+        <div className="left arrow" onClick={() => {
+          console.log("left arrow clicked");
+          if (this.state.category > 1) {
+            this.setState(prevState => ({
+              category: prevState.category - 1
+            }));
+          }
+        }}>
+          Previous Category
+        </div>
+        <div className="right arrow" onClick={() => {
+          console.log("right arrow clicked");
+          if (this.state.category < 6) {
+            this.setState(prevState => ({
+              category: prevState.category + 1
+            }));
+          }
+        }}>
+          Next Category
+        </div>
+        <div>
+          {this.renderResults()}
+        </div>
+        {/* <div className="ui container six column grid">
           {this.state.songs.map(song => (
             <div
               className="ui one column card"
@@ -245,15 +326,15 @@ class App extends React.Component {
               </div>
             </div>
           ))}
-        </div>
-        <select
+        </div> */}
+        {/* <select
           className="ui dropdown"
           onChange={e => this.setState({ currentDevice: e.target.value })}
         >
           {this.state.devices.map(device => (
             <option value={device.id}>{device.name}</option>
           ))}
-        </select>
+        </select> */}
       </div>
     );
   }
