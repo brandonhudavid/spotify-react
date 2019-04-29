@@ -28,9 +28,10 @@ class App extends React.Component {
     this.display_name = '';
     this.topTracks = [];
     this.topTrackName = '';
+    this.topTrackArtist = '';
     this.state = {
       authenticated: false,
-      category: 2,
+      category: 1,
       songs: [],
       isPlaying: false,
       search: "",
@@ -73,11 +74,13 @@ class App extends React.Component {
             this.topTracks.push(val.items[i].id)
           }
           this.topTrackName = val.items[0].name
+          this.topTrackArtist = val.items[0].artists[0].name
+
         } else {
           console.log(err)
         }
       })
-      this.renderCategory();
+      this.renderCategory(this.state.category);
     }
   }
 
@@ -158,10 +161,11 @@ class App extends React.Component {
           var dance = val.danceability
           var energy = val.energy
           var pitch = ['C', 'C#/D♭', 'D', 'D#/E♭', 'E', 'F',' F♯/G♭', 'G', 'G♯/A♭', 'A', 'A♯/B♭', 'B']
-          console.log("Song: " + this.topTrackName)
-          console.log("Key: " + pitch[key])
-          console.log("Danceability: " + dance)
-          console.log("Energy: " + energy)
+
+          var musicalArr = ["Your Top Song: " + this.topTrackName + ' by ' + this.topTrackArtist, "Key: " + pitch[key], "Danceability: " + dance, "Energy: " + energy]
+          this.setState({
+            results: musicalArr
+          })
         } else {
             console.log(err);
         }
@@ -222,6 +226,9 @@ class App extends React.Component {
         }
     })
   }
+  async tedTalk() {
+    this.setState({results: []})
+  }
 
   secondsToMinutes(x) {
     var min = Math.floor(x/60);
@@ -246,7 +253,13 @@ class App extends React.Component {
         this.searchPrime();
         break;
       case 4:
+        this.musicalKey();
+        break;
+      case 5:
         this.howExplicit();
+        break;
+      case 6:
+        this.tedTalk();
         break;
       default:
         break;
@@ -262,7 +275,11 @@ class App extends React.Component {
       case 3:
         return "Prime Songs";
       case 4:
-        return "How Explicit";
+        return "Musical Information You Didn't Need To Know But Here It Is Anyways";
+      case 5:
+        return "How Explicit Are You?";
+      case 6:
+        return "Thanks for coming to our Ted Talk. Hope you learned something about your listening! - Brandon & Megan";
       default:
         break;
     }
@@ -297,7 +314,7 @@ class App extends React.Component {
               category: prevState.category - 1
             }));
           }
-        }}>
+        }}><img src={"/img/left-arrow.png"} alt="left arrow" />
           Previous Category
         </div>
         <div className="right arrow" onClick={() => {
