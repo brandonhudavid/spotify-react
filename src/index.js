@@ -27,6 +27,7 @@ class App extends React.Component {
     super(props);
     this.display_name = '';
     this.topTracks = [];
+    this.topTrackName = '';
     this.state = {
       authenticated: false,
       category: 2,
@@ -71,7 +72,7 @@ class App extends React.Component {
           for (i = 0; i < 20; i++) {
             this.topTracks.push(val.items[i].id)
           }
-          console.log(this.topTracks)
+          this.topTrackName = val.items[0].name
         } else {
           console.log(err)
         }
@@ -150,14 +151,19 @@ class App extends React.Component {
   }
 
   async musicalKey() {
-    await this.spotifyClient.getAudioFeaturesForTracks(this.topTracks, (err, val) => {
+    await this.spotifyClient.getAudioFeaturesForTrack(this.topTracks[0], (err, val) => {
         if (!err) {
-            console.log(val)
-            console.log('hi')
-
+          console.log(val)
+          var key = val.key
+          var dance = val.danceability
+          var energy = val.energy
+          var pitch = ['C', 'C#/D♭', 'D', 'D#/E♭', 'E', 'F',' F♯/G♭', 'G', 'G♯/A♭', 'A', 'A♯/B♭', 'B']
+          console.log("Song: " + this.topTrackName)
+          console.log("Key: " + pitch[key])
+          console.log("Danceability: " + dance)
+          console.log("Energy: " + energy)
         } else {
             console.log(err);
-            console.log('hi')
         }
     })
   }
