@@ -25,12 +25,16 @@ import { bigIntLiteral } from "@babel/types";
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.artistsToMarryRes = [];
+    this.artistLettersRes = [];
+    this.primeSongsRes = [];
+    this.howExplicitRes = [];
     this.display_name = '';
     this.topTracks = [];
     this.topTrackName = '';
     this.state = {
       authenticated: false,
-      category: 2,
+      category: 1,
       songs: [],
       isPlaying: false,
       search: "",
@@ -77,7 +81,7 @@ class App extends React.Component {
           console.log(err)
         }
       })
-      this.renderCategory();
+      this.renderCategory(this.state.category);
     }
   }
 
@@ -108,46 +112,58 @@ class App extends React.Component {
 
 
   async artistsToMarry() {
-    console.log("getArtists");
-    await this.spotifyClient.getMyTopArtists({limit:5}, (err, val) => {
-        if (!err) {
-          var artists = [];
-          for (var i=0; i < val.items.length; i++) {
-            artists.push(val.items[i].name);
+    if (this.artistsToMarryRes.length > 0) {
+      this.setState({
+        results: this.artistsToMarryRes
+      })
+    } else {
+      await this.spotifyClient.getMyTopArtists({limit:5}, (err, val) => {
+          if (!err) {
+            var artists = [];
+            for (var i=0; i < val.items.length; i++) {
+              artists.push(val.items[i].name);
+            }
+            this.artistsToMarryRes = artists;
+            this.setState({
+              results: artists
+            });
+          } else {
+              console.log(err);
           }
-          this.setState({
-            results: artists
-          });
-        } else {
-            console.log(err);
-        }
-    });
+      });
+    }
   }
  
   async artistLetters() {
-    const letter = this.display_name.substring(0, 1);
-    console.log(letter)
-    await this.spotifyClient.searchArtists(letter, {limit:50}, (err, val) => {
-        if (!err) {
-            var artistsArr = [];
-            var i;
-            for (i = 0; i < 50; i++) {
-                let artistLetter = val.artists.items[i].name.substring(0,1).toLowerCase();
-                let letterLetter = letter.toLowerCase();
-                if (artistLetter === letterLetter) {
-                    artistsArr.push(val.artists.items[i].name);
-                    if (artistsArr.length == 5) {
-                      break;
-                    }
-                }
-            }
-            this.setState({
-              results: artistsArr
-            })
-        } else {
-            console.log(err);
-        }
-    })
+    if (this.artistLettersRes.length > 0) {
+      this.setState({
+        results: this.artistLettersRes
+      })
+    } else {
+      const letter = this.display_name.substring(0, 1);
+      await this.spotifyClient.searchArtists(letter, {limit:50}, (err, val) => {
+          if (!err) {
+              var artistsArr = [];
+              var i;
+              for (i = 0; i < 50; i++) {
+                  let artistLetter = val.artists.items[i].name.substring(0,1).toLowerCase();
+                  let letterLetter = letter.toLowerCase();
+                  if (artistLetter === letterLetter) {
+                      artistsArr.push(val.artists.items[i].name);
+                      if (artistsArr.length == 5) {
+                        break;
+                      }
+                  }
+              }
+              this.artistLettersRes = artistsArr;
+              this.setState({
+                results: this.artistLettersRes
+              })
+          } else {
+              console.log(err);
+          }
+      })
+    }
   }
 
   async musicalKey() {
@@ -169,26 +185,33 @@ class App extends React.Component {
   }
 
   async searchPrime() {
-    await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
-        if (!err) {
-            var primeSongs = [];
-            var i;
-            for (i = 0; i < val.total; i++) {
-                var songLength = Math.round(val.items[i].duration_ms / 1000);
-                if (this.isPrime(songLength)) {
-                  primeSongs.push(val.items[i].name + " (" + this.secondsToMinutes(songLength) + ")");
-                }
-                if (primeSongs.length >= 5) {
-                    break;
-                }
-            }
-            this.setState({
-              results: primeSongs
-            })
-        } else {
-            console.log(err);
-        }
-    })
+    if (this.primeSongsRes.length > 0) {
+      this.setState({
+        results: this.primeSongsRes
+      })
+    } else {
+      await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
+          if (!err) {
+              var primeSongs = [];
+              var i;
+              for (i = 0; i < val.total; i++) {
+                  var songLength = Math.round(val.items[i].duration_ms / 1000);
+                  if (this.isPrime(songLength)) {
+                    primeSongs.push(val.items[i].name + " (" + this.secondsToMinutes(songLength) + ")");
+                  }
+                  if (primeSongs.length >= 5) {
+                      break;
+                  }
+              }
+              this.primeSongsRes = primeSongs;
+              this.setState({
+                results: this.primeSongsRes
+              })
+          } else {
+              console.log(err);
+          }
+      })
+    }
   }
 
   isPrime(num) {
@@ -204,23 +227,29 @@ class App extends React.Component {
   }
 
   async howExplicit() {
-    var count = 0;
-    await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
-        if (!err) {
-            // console.log(val);
-            var i;
-            for (i = 0; i < 50; i++) {
-                if (val.items[i].explicit) {
-                    count++;
-                }
-            }
-            this.setState({
-              results: [count*2 + "%"]
-            })
-        } else {
-            console.log(err);
-        }
-    })
+    if (this.howExplicitRes.length > 0) {
+      this.setState({
+        results: this.howExplicitRes
+      })
+    } else {
+      var count = 0;
+      await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
+          if (!err) {
+              var i;
+              for (i = 0; i < 50; i++) {
+                  if (val.items[i].explicit) {
+                      count++;
+                  }
+              }
+              this.howExplicitRes = [count*2 + "%"]
+              this.setState({
+                results: this.howExplicitRes
+              })
+          } else {
+              console.log(err);
+          }
+      })
+    }
   }
 
   secondsToMinutes(x) {
