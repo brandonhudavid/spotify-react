@@ -20,6 +20,8 @@ import LabelElement from "./LabelElement";
 import "./styles.css";
 import { bigIntLiteral } from "@babel/types";
 
+
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -168,7 +170,7 @@ class App extends React.Component {
             for (i = 0; i < val.total; i++) {
                 var songLength = Math.round(val.items[i].duration_ms / 1000);
                 if (this.isPrime(songLength)) {
-                  primeSongs.push([val.items[i].name, songLength])
+                  primeSongs.push(val.items[i].name + " (" + this.secondsToMinutes(songLength) + ")");
                 }
                 if (primeSongs.length >= 5) {
                     break;
@@ -207,7 +209,7 @@ class App extends React.Component {
                 }
             }
             this.setState({
-              results: [count*2]
+              results: [count*2 + "%"]
             })
         } else {
             console.log(err);
@@ -215,19 +217,10 @@ class App extends React.Component {
     })
   }
 
-  testRender(x) {
-    if (x != 0) {
-      return (
-        <div>
-          This is a test. X does not = 0.
-        </div>
-      )
-    }
-      return (
-        <div>
-          This is a test. X does not = 0.
-        </div>
-      )
+  secondsToMinutes(x) {
+    var min = Math.floor(x/60);
+    var sec = x % min;
+    return min + "m " + sec + "s";
   }
 
   renderResults() {
@@ -254,35 +247,43 @@ class App extends React.Component {
     }
   }
 
+  renderTitle() {
+    switch(this.state.category) {
+      case 1:
+        return "Artists You Should Marry";
+      case 2:
+        return "Artists With The Same First Letter Of Your First Name";
+      case 3:
+        return "Prime Songs";
+      case 4:
+        return "How Explicit";
+      default:
+        break;
+    }
+  }
+
   render() {
     if (!this.state.authenticated) {
       return (
-        <a
-          href={`https://accounts.spotify.com/authorize/?client_id=ac9ec319b658424d8aa1e41317e7c70f&response_type=token&redirect_uri=${window
-            .location.origin +
-            window.location
-              .pathname}&scope=user-read-playback-state user-modify-playback-state user-top-read user-read-private`}
-        >
-          Login with Spotify
-        </a>
+        <div className="App">
+          <div className="title">
+            When You Open Your Spotify Application On Your Mobile Device Or Desktop And You Choose To Listen To Your Favorite Music, What Does Said Music Say About You
+          </div>
+          <a
+            href={`https://accounts.spotify.com/authorize/?client_id=ac9ec319b658424d8aa1e41317e7c70f&response_type=token&redirect_uri=${window
+              .location.origin +
+              window.location
+                .pathname}&scope=user-read-playback-state user-modify-playback-state user-top-read user-read-private`}
+          >
+            Login with Spotify
+          </a>
+        </div>
       );
     }
     return (
+      <div className="App">
       <div className="ui container">
-        <button onClick={() => this.artistsToMarry()}>Get Artists You Should Marry</button>
-        <button onClick={() => this.artistLetters()}>Artists With The Same First Letter Of Name</button>
-        <button onClick={() => this.musicalKey()}>Musical Key</button>
-        <button onClick={() => this.searchArtists()}>Songs You’ve Listened To That Are A Prime Number Of Seconds In Length</button>
-        <button onClick={() => this.searchPrime()}>Prime Songs</button>
-        <button onClick={() => this.howExplicit()}>How Explicit</button>
-
-        <form className="ui form" onSubmit={this.onSubmit}>
-          <input
-            type="text"
-            onChange={e => this.setState({ search: e.target.value })}
-          />
-          <input type="submit" value="Search" />
-        </form>
+      <img src={"./left-arrow.png"} />
         <div className="left arrow" onClick={() => {
           console.log("left arrow clicked");
           if (this.state.category > 1) {
@@ -303,7 +304,11 @@ class App extends React.Component {
         }}>
           Next Category
         </div>
-        <div>
+        <div style={{height: 100 + 'px'}} />
+        <div className="title">
+          {this.renderTitle()}
+        </div>
+        <div className="results">
           {this.renderResults()}
         </div>
         {/* <div className="ui container six column grid">
@@ -335,6 +340,7 @@ class App extends React.Component {
             <option value={device.id}>{device.name}</option>
           ))}
         </select> */}
+      </div>
       </div>
     );
   }

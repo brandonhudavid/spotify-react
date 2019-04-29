@@ -1,17 +1,49 @@
+@font-face {
+  font-family: "Circular Black";
+  src: url("CircularStd-Black.otf");
+}
+
+@font-face {
+  font-family: "Circular Bold";
+  src: url("CircularStd-Bold.otf");
+}
+
 .App {
-    font-family: sans-serif;
-    text-align: center;
-  }
+  font-family: sans-serif;
+  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: #b19cc7;
+}
+
+.title {
+  font-family: "Circular Black", "sans-serif";
+  color: #fff865;
+  font-size: 48px;
+}
+
+.results {
+  font-family: "Circular Bold", "sans-serif";
+  color: #fff865;
+  font-size: 24px;
+}
   
-  .arrow {
-    position: absolute;
-    top: 50vh;
-  }
+.arrow {
+  position: absolute;
+  top: 50vh;
+}
 
-  .left {
-    left: 5vw;
-  }
+.left {
+  left: 5vw;
+}
 
-  .right {
-    right: 5vw;
-  }
+.right {
+  right: 5vw;
+}
+
+ul {
+  list-style-type: none;
+}
