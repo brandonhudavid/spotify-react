@@ -23,6 +23,7 @@
   font-family: "Circular Black", "sans-serif";
   color: #fff865;
   font-size: 48px;
+  line-height: 60px;
 }
 
 .results {
@@ -46,4 +47,5 @@
 
 ul {
   list-style-type: none;
+  line-height: 32px;
 }

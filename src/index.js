@@ -28,11 +28,13 @@ class App extends React.Component {
     this.artistsToMarryRes = [];
     this.artistLettersRes = [];
     this.primeSongsRes = [];
+    this.musicalKeyRes = [];
     this.howExplicitRes = [];
     this.display_name = '';
     this.topTracks = [];
     this.topTrackName = '';
     this.topTrackArtist = '';
+    this.guessArr = [];
     this.state = {
       authenticated: false,
       category: 1,
@@ -40,7 +42,8 @@ class App extends React.Component {
       isPlaying: false,
       search: "",
       currentDevice: "",
-      results: []
+      results: [],
+      explicitText: ""
     };
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -170,22 +173,32 @@ class App extends React.Component {
   }
 
   async musicalKey() {
-    await this.spotifyClient.getAudioFeaturesForTrack(this.topTracks[0], (err, val) => {
-        if (!err) {
-          console.log(val)
-          var key = val.key
-          var dance = val.danceability
-          var energy = val.energy
-          var pitch = ['C', 'C#/D♭', 'D', 'D#/E♭', 'E', 'F',' F♯/G♭', 'G', 'G♯/A♭', 'A', 'A♯/B♭', 'B']
+    if (this.musicalKeyRes.length > 0) {
+      this.setState({
+        results: this.musicalKeyRes
+      })
+    } else {
+      await this.spotifyClient.getAudioFeaturesForTrack(this.topTracks[0], (err, val) => {
+          if (!err) {
+            console.log(val)
+            var key = val.key
+            var dance = val.danceability
+            var energy = val.energy
+            var pitch = ['C', 'C#/D♭', 'D', 'D#/E♭', 'E', 'F',' F♯/G♭', 'G', 'G♯/A♭', 'A', 'A♯/B♭', 'B']
 
-          var musicalArr = ["Your Top Song: " + this.topTrackName + ' by ' + this.topTrackArtist, "Key: " + pitch[key], "Danceability: " + dance, "Energy: " + energy]
-          this.setState({
-            results: musicalArr
-          })
-        } else {
-            console.log(err);
-        }
-    })
+            var musicalArr = ["Your Top Song: " + this.topTrackName + ' by ' + this.topTrackArtist,
+                              "Key: " + pitch[key],
+                              "Danceability: " + dance,
+                              "Energy: " + energy]
+            this.musicalKeyRes = musicalArr;
+            this.setState({
+              results: this.musicalKeyRes
+            })
+          } else {
+              console.log(err);
+          }
+      })
+    }
   }
 
   async searchPrime() {
@@ -245,7 +258,8 @@ class App extends React.Component {
                       count++;
                   }
               }
-              this.howExplicitRes = [count*2 + "%"]
+              this.howExplicitRes = [count*2];
+              console.log("howExplicitRes: " + this.howExplicitRes);
               this.setState({
                 results: this.howExplicitRes
               })
@@ -265,7 +279,90 @@ class App extends React.Component {
     return min + "m " + sec + "s";
   }
 
+  shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+    return array;
+  }
+
+  explicitGuesses() {
+    var answer = this.howExplicitRes[0];
+    console.log("answer: " + answer);
+    var guess1 = Math.floor((Math.random() * 100));
+    while (Math.abs(answer - guess1) < 10) {
+      guess1 = Math.floor((Math.random() * 100));
+    }
+    var guess2 = Math.floor((Math.random() * 100));
+    while (Math.abs(answer - guess2) < 10 || Math.abs(guess1 - guess2) < 10) {
+      guess2 = Math.floor((Math.random() * 100));
+    }
+    this.guessArr = this.shuffle([answer, guess1, guess2])
+  }
+
+  checkExplicit(x) {
+    if (x === this.howExplicitRes[0] + "%") {
+      console.log("guessed correctly!");
+      this.setState({
+        explicitText: "You got it!"
+      })
+    } else {
+      console.log("guessed wrong!");
+      this.setState({
+        explicitText: "Try again!"
+      })
+    }
+  }
+
+  showPercents(x) {
+    if (this.guessArr[x]) {
+      return this.guessArr[x];
+    }
+    return this.howExplicitRes[0];
+  }
+
   renderResults() {
+    if (this.state.category == 5) {
+      if (this.guessArr.length != 3) {
+        this.explicitGuesses();
+      }
+      return (
+        <div>
+        <div class="results" style={{marginBottom: 100 + 'px'}}>Guess how explicit your top 50 songs are!</div>
+        <div class="ui grid">
+          <div class="three column row">
+            <div class="column">
+              <button class="ui yellow button" onClick={() => {this.checkExplicit(this.showPercents(0) + "%")}}>
+                {this.showPercents(0) + "%"}
+              </button>
+            </div>
+            <div class="column">
+              <button class="ui yellow button" onClick={() => {this.checkExplicit(this.showPercents(1) + "%")}}>
+              {this.showPercents(1) + "%"}
+              </button>
+            </div>
+            <div class="column">
+              <button class="ui yellow button" onClick={() => {this.checkExplicit(this.showPercents(2) + "%")}}>
+              {this.showPercents(2) + "%"}
+              </button>
+            </div>
+          </div>
+          <div className="results">{this.state.explicitText}</div>
+        </div>
+        </div>
+      )
+    }
     return (<ul>{this.state.results.map(result =>
     <li>{result}</li>)}</ul>)
   }
@@ -334,65 +431,36 @@ class App extends React.Component {
     }
     return (
       <div className="App">
-      <div className="ui container">
-      <img src={"./left-arrow.png"} />
-        <div className="left arrow" onClick={() => {
-          console.log("left arrow clicked");
-          if (this.state.category > 1) {
-            this.setState(prevState => ({
-              category: prevState.category - 1
-            }));
-          }
-        }}><img src={"/img/left-arrow.png"} alt="left arrow" />
-          Previous Category
-        </div>
-        <div className="right arrow" onClick={() => {
-          console.log("right arrow clicked");
-          if (this.state.category < 6) {
-            this.setState(prevState => ({
-              category: prevState.category + 1
-            }));
-          }
-        }}>
-          Next Category
-        </div>
-        <div style={{height: 100 + 'px'}} />
-        <div className="title">
-          {this.renderTitle()}
-        </div>
-        <div className="results">
-          {this.renderResults()}
-        </div>
-        {/* <div className="ui container six column grid">
-          {this.state.songs.map(song => (
-            <div
-              className="ui one column card"
-              key={song.id}
-              onClick={e => this.startPlayback(song.id)}
-            >
-              <div className="image">
-                <img src={song.album.images[0].url} />
-              </div>
-              <div className="content">
-                <p className="header">{song.name}</p>
-                <div className="meta">
-                  <span className="date">
-                    {song.artists.map(artist => artist.name).join(", ")}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div> */}
-        {/* <select
-          className="ui dropdown"
-          onChange={e => this.setState({ currentDevice: e.target.value })}
-        >
-          {this.state.devices.map(device => (
-            <option value={device.id}>{device.name}</option>
-          ))}
-        </select> */}
-      </div>
+      <div class="ui container">
+        <img src={"./left-arrow.png"} />
+          <div className="left arrow" onClick={() => {
+            console.log("left arrow clicked");
+            if (this.state.category > 1) {
+              this.setState(prevState => ({
+                category: prevState.category - 1
+              }));
+            }
+          }}><img src={"/img/left-arrow.png"} alt="left arrow" />
+            Previous Category
+          </div>
+          <div className="right arrow" onClick={() => {
+            console.log("right arrow clicked");
+            if (this.state.category < 6) {
+              this.setState(prevState => ({
+                category: prevState.category + 1
+              }));
+            }
+          }}>
+            Next Category
+          </div>
+          <div style={{height: 100 + 'px'}} />
+          <div className="title">
+            {this.renderTitle()}
+          </div>
+          <div className="results">
+            {this.renderResults()}
+          </div>
+          </div>
       </div>
     );
   }

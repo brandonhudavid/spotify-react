@@ -55,6 +55,7 @@ class App extends React.Component {
   }
 
   render() {
+    // inside the class app
     if (!this.state.authenticated) {
       return (
         <a
@@ -68,6 +69,7 @@ class App extends React.Component {
       );
     }
     return (
+      // inside the class app
       <div className="ui container">
         <form className="ui form" onSubmit={this.onSubmit}>
           <input
