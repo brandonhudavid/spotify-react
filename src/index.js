@@ -19,6 +19,8 @@ import LabelElement from "./LabelElement";
 
 import "./styles.css";
 import { bigIntLiteral } from "@babel/types";
+import { ReactComponent as LeftArrow } from '../src/left-arrow.png';
+
 
 
 
@@ -29,6 +31,8 @@ class App extends React.Component {
     this.topTracks = [];
     this.topTrackName = '';
     this.topTrackArtist = '';
+    this.topTrackArtistURL = '';
+    this.topTrackAlbum = '';
     this.state = {
       authenticated: false,
       category: 1,
@@ -36,7 +40,8 @@ class App extends React.Component {
       isPlaying: false,
       search: "",
       currentDevice: "",
-      results: []
+      results: [],
+      artistImage: ''
     };
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -75,6 +80,7 @@ class App extends React.Component {
           }
           this.topTrackName = val.items[0].name
           this.topTrackArtist = val.items[0].artists[0].name
+          this.topTrackAlbum = val.items[0].album.images[0].url
 
         } else {
           console.log(err)
@@ -118,8 +124,11 @@ class App extends React.Component {
           for (var i=0; i < val.items.length; i++) {
             artists.push(val.items[i].name);
           }
+          this.topTrackArtistURL = val.items[0].images[0].url;
+          artists.push(<img src={this.topTrackArtistURL} />)
           this.setState({
-            results: artists
+            results: artists, 
+            artistImage: this.topTrackArtistURL,
           });
         } else {
             console.log(err);
@@ -133,19 +142,22 @@ class App extends React.Component {
     await this.spotifyClient.searchArtists(letter, {limit:50}, (err, val) => {
         if (!err) {
             var artistsArr = [];
+            var image = ''
             var i;
             for (i = 0; i < 50; i++) {
                 let artistLetter = val.artists.items[i].name.substring(0,1).toLowerCase();
                 let letterLetter = letter.toLowerCase();
                 if (artistLetter === letterLetter) {
                     artistsArr.push(val.artists.items[i].name);
+                    image = val.artists.items[i].images[0].url;
                     if (artistsArr.length == 5) {
                       break;
                     }
                 }
             }
             this.setState({
-              results: artistsArr
+              results: artistsArr,
+              artistImage: image,
             })
         } else {
             console.log(err);
@@ -164,7 +176,8 @@ class App extends React.Component {
 
           var musicalArr = ["Your Top Song: " + this.topTrackName + ' by ' + this.topTrackArtist, "Key: " + pitch[key], "Danceability: " + dance, "Energy: " + energy]
           this.setState({
-            results: musicalArr
+            results: musicalArr, 
+            artistImage: this.topTrackAlbum,
           })
         } else {
             console.log(err);
@@ -176,18 +189,21 @@ class App extends React.Component {
     await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
         if (!err) {
             var primeSongs = [];
+            var image = ''
             var i;
             for (i = 0; i < val.total; i++) {
                 var songLength = Math.round(val.items[i].duration_ms / 1000);
                 if (this.isPrime(songLength)) {
                   primeSongs.push(val.items[i].name + " (" + this.secondsToMinutes(songLength) + ")");
+            
                 }
                 if (primeSongs.length >= 5) {
                     break;
                 }
             }
             this.setState({
-              results: primeSongs
+              results: primeSongs, 
+              artistImage: '',
             })
         } else {
             console.log(err);
@@ -219,7 +235,9 @@ class App extends React.Component {
                 }
             }
             this.setState({
-              results: [count*2 + "%"]
+              results: [count*2 + "%"], 
+              artistImage: ''
+              
             })
         } else {
             console.log(err);
@@ -238,7 +256,11 @@ class App extends React.Component {
 
   renderResults() {
     return (<ul>{this.state.results.map(result =>
-    <li>{result}</li>)}</ul>)
+    <li>{result}</li>)}
+    <img src = {this.state.artistImage}/>
+    </ul>
+    
+    )
   }
 
   renderCategory(num) {
@@ -251,6 +273,7 @@ class App extends React.Component {
         break;
       case 3:
         this.searchPrime();
+
         break;
       case 4:
         this.musicalKey();
@@ -269,7 +292,7 @@ class App extends React.Component {
   renderTitle() {
     switch(this.state.category) {
       case 1:
-        return "Artists You Should Marry";
+        return "Artists You Should Consider Marrying";
       case 2:
         return "Artists With The Same First Letter Of Your First Name";
       case 3:
@@ -306,7 +329,6 @@ class App extends React.Component {
     return (
       <div className="App">
       <div className="ui container">
-      <img src={"./left-arrow.png"} />
         <div className="left arrow" onClick={() => {
           console.log("left arrow clicked");
           if (this.state.category > 1) {
@@ -314,8 +336,9 @@ class App extends React.Component {
               category: prevState.category - 1
             }));
           }
-        }}><img src={"/img/left-arrow.png"} alt="left arrow" />
-          Previous Category
+        }}>
+        <img src={"https://lh3.google.com/u/0/d/1-575M8mAa3hl6fj2mvr9ED55eLZZFyTO=w2056-h1532-iv1"} width="30" alt="left arrow" />
+            
         </div>
         <div className="right arrow" onClick={() => {
           console.log("right arrow clicked");
@@ -325,7 +348,7 @@ class App extends React.Component {
             }));
           }
         }}>
-          Next Category
+          <img src = {"https://lh3.google.com/u/0/d/1MFEpOZARuWjANKEYN50btH2Q_ol_oPJq=w2120-h1532-iv1"} width="30" alt="right arrow"/>
         </div>
         <div style={{height: 100 + 'px'}} />
         <div className="title">
