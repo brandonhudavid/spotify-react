@@ -39,6 +39,7 @@ class App extends React.Component {
     this.guessArr = [];
     this.topTrackArtistURL = '';
     this.topTrackAlbum = '';
+    this.redirect_uri = "http://localhost:8888/callback/";
     this.state = {
       authenticated: false,
       category: 1,
@@ -439,10 +440,7 @@ class App extends React.Component {
             When You Open Your Spotify Application On Your Mobile Device Or Desktop And You Choose To Listen To Your Favorite Music, What Does Said Music Say About You
           </div>
           <a
-            href={`https://accounts.spotify.com/authorize/?client_id=ac9ec319b658424d8aa1e41317e7c70f&response_type=token&redirect_uri=${window
-              .location.origin +
-              window.location
-                .pathname}&scope=user-read-playback-state user-modify-playback-state user-top-read user-read-private`}
+            href={`https://accounts.spotify.com/authorize/?client_id=ac9ec319b658424d8aa1e41317e7c70f&response_type=token&redirect_uri=${this.redirect_uri}&scope=user-read-playback-state user-modify-playback-state user-top-read user-read-private`}
           >
             Login with Spotify
           </a>
@@ -450,7 +448,7 @@ class App extends React.Component {
       );
     }
     return (
-      <div className="App">
+      <div className={"App App" + this.state.category}>
       <div className="ui container">
         <div className="left arrow" onClick={() => {
           console.log("left arrow clicked");
@@ -474,7 +472,7 @@ class App extends React.Component {
           <img src = {"https://lh3.google.com/u/0/d/1MFEpOZARuWjANKEYN50btH2Q_ol_oPJq=w2120-h1532-iv1"} width="30" alt="right arrow"/>
         </div>
         <div style={{height: 100 + 'px'}} />
-        <div className="title">
+        <div className="title ">
           {this.renderTitle()}
         </div>
         <div className="results">

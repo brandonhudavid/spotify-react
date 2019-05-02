@@ -14,9 +14,34 @@
   position: absolute;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 100vw;
+  height: auto;
+  width: 100%;
+  /* background-color: #b19cc7; */
+  background-repeat: repeat;
+}
+
+.App1 {
   background-color: #b19cc7;
+}
+
+.App1 {
+  background-color: #b19cc7;
+}
+
+.App1 {
+  background-color: #b19cc7;
+}
+
+.App1 {
+  background-color: #b19cc7;
+}
+
+.App1 {
+  background-color: #b19cc7;
+}
+
+.App6 {
+  background-color: rgb(236, 81, 107);
 }
 
 .title {
