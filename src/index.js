@@ -481,11 +481,15 @@ class App extends React.Component {
           <div className="coverchild">
             When You Open Your Spotify Application On Your Mobile Device Or Desktop And You Choose To Listen To Your Favorite Music, What Does Said Music Say About You
           </div></div>
+          <div className = "loginbutton">
           <a
             href={`https://accounts.spotify.com/authorize/?client_id=390641f619b14b1581aaadd96df6bbb8&response_type=token&redirect_uri=http://localhost:3000/callback/&scope=user-read-playback-state user-modify-playback-state user-top-read user-read-private`}
           >
-            Login with Spotify
+            <img src={"https://lh3.google.com/u/0/d/118tOtCTdLNH0xdj0BZe-8zwaOzEaVq1y=w2846-h1434-iv1"} width="300"/>
           </a>
+          </div>
+
+
         </div>
       );
     }
