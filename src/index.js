@@ -67,7 +67,7 @@ class App extends React.Component {
       this.setState({
         authenticated: true,
         devices,
-        currentDevice: devices[0].id
+        // currentDevice: devices[0].id
       });
 
       await this.spotifyClient.getMe(null, (err, val) => {
@@ -393,7 +393,7 @@ class App extends React.Component {
         </div>
         <div class="column">
           {/* <img src = {this.state.artistImage} width={250} style={{verticalAlign: "left"}}/> */}
-          <img src = {this.artistImages[this.state.category]} width={250} style={{verticalAlign: "left"}}/>
+          <img src = {this.artistImages[this.state.category-1]} width={250} style={{verticalAlign: "left"}}/>
         </div>
       </div>
 
