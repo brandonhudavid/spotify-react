@@ -273,17 +273,26 @@ class App extends React.Component {
     })
   }
 
-  isPrime(num) {
-    var sqrtnum=Math.floor(Math.sqrt(num));
-      var prime = num != 1;
-      for(var i=2; i<sqrtnum+1; i++) {
-          if(num % i == 0) {
-              prime = false;
-              break;
-          }
-      }
-      return prime;
-  }
+  isPrime(number)
+ { 
+   if (number <= 1)
+   return false;
+
+   // The check for the number 2 and 3
+   if (number <= 3)
+   return true;
+
+   if (number%2 == 0 || number%3 == 0)
+   return false;
+
+   for (var i=5; i*i<=number; i=i+6)
+   {
+      if (number%i == 0 || number%(i+2) == 0)
+      return false;
+   }
+
+   return true;
+ }
 
   async calculateExplicit() {
     var count = 0;
@@ -485,7 +494,7 @@ class App extends React.Component {
           </div></div>
           <div className = "loginbutton">
           <a
-            href={`https://accounts.spotify.com/authorize/?client_id=390641f619b14b1581aaadd96df6bbb8&response_type=token&redirect_uri=http://localhost:3000/callback/&scope=user-read-playback-state user-modify-playback-state user-top-read user-read-private`}
+            href={`https://accounts.spotify.com/authorize/?client_id=390641f619b14b1581aaadd96df6bbb8&response_type=token&redirect_uri=http://vibrant-lamport-7c4035/callback/&scope=user-read-playback-state user-modify-playback-state user-top-read user-read-private`}
           >
             <img src={"https://lh3.google.com/u/0/d/118tOtCTdLNH0xdj0BZe-8zwaOzEaVq1y=w2846-h1434-iv1"} width="300"/>
           </a>
