@@ -451,9 +451,10 @@ class App extends React.Component {
     if (!this.state.authenticated) {
       return (
         <div className="App">
-          <div className="title">
+          <div className="coverpage">
+          <div className="coverchild">
             When You Open Your Spotify Application On Your Mobile Device Or Desktop And You Choose To Listen To Your Favorite Music, What Does Said Music Say About You
-          </div>
+          </div></div>
           <a
             href={`https://accounts.spotify.com/authorize/?client_id=390641f619b14b1581aaadd96df6bbb8&response_type=token&redirect_uri=http://localhost:3000/callback/&scope=user-read-playback-state user-modify-playback-state user-top-read user-read-private`}
           >

@@ -14,21 +14,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  height: auto;
-  width: 100%;
-  /* background-color: #b19cc7; */
-  background-repeat: repeat;
-}
-
-.App1 {
-  background-color: #b19cc7;
-}
-
-.App1 {
-  background-color: #b19cc7;
-}
-
-.App1 {
+  height: 150vh;
+  width: 100vw;
   background-color: #b19cc7;
 }
 
@@ -56,6 +43,21 @@
   background-color: #000;
 }
 
+.coverpage {
+  font-family: "Circular Black", "sans-serif";
+  vertical-align: center;
+  display: flex;
+  margin-top: 60px;
+  /* align-items: center; */
+  justify-content: center;
+  color: #ffda37;
+  font-size: 48px;
+  line-height: 60px;
+}
+
+.coverchild {
+  width: 70%;
+}
 
 .title {
   font-family: "Circular Black", "sans-serif";
