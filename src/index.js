@@ -20,9 +20,6 @@ import LabelElement from "./LabelElement";
 import "./styles.css";
 import { bigIntLiteral } from "@babel/types";
 
-
-
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -70,7 +67,7 @@ class App extends React.Component {
       this.setState({
         authenticated: true,
         devices,
-        currentDevice: devices[0].id
+        // currentDevice: devices[0].id
       });
 
       await this.spotifyClient.getMe(null, (err, val) => {
@@ -129,7 +126,8 @@ class App extends React.Component {
   async artistsToMarry() {
     if (this.artistsToMarryRes.length > 0) {
       this.setState({
-        results: this.artistsToMarryRes
+        results: this.artistsToMarryRes,
+        artistImage: this.artistImages[0]
       })
     } else {
       await this.spotifyClient.getMyTopArtists({limit:5}, (err, val) => {
@@ -158,7 +156,8 @@ class App extends React.Component {
   async artistLetters() {
     if (this.artistLettersRes.length > 0) {
       this.setState({
-        results: this.artistLettersRes
+        results: this.artistLettersRes,
+        artistImage: this.artistImages[1]
       })
     } else {
       const letter = this.display_name.substring(0, 1);
@@ -194,7 +193,8 @@ class App extends React.Component {
   async musicalKey() {
     if (this.musicalKeyRes.length > 0) {
       this.setState({
-        results: this.musicalKeyRes
+        results: this.musicalKeyRes,
+        artistImage: this.artistImages[3]
       })
     } else {
       await this.spotifyClient.getAudioFeaturesForTrack(this.topTracks[0], (err, val) => {
@@ -393,7 +393,7 @@ class App extends React.Component {
         </div>
         <div class="column">
           {/* <img src = {this.state.artistImage} width={250} style={{verticalAlign: "left"}}/> */}
-          <img src = {this.artistImages[this.state.category]} width={250} style={{verticalAlign: "left"}}/>
+          <img src = {this.artistImages[this.state.category-1]} width={250} style={{verticalAlign: "left"}}/>
         </div>
       </div>
 
