@@ -14,31 +14,12 @@
   position: absolute;
   top: 0;
   left: 0;
-<<<<<<< HEAD
   height: 150vh;
   width: 100vw;
-=======
-  height: auto;
-  width: 100%;
-  /* background-color: #b19cc7; */
-  background-repeat: repeat;
-}
-
-.App1 {
   background-color: #b19cc7;
 }
 
 .App1 {
-  background-color: #b19cc7;
-}
-
-.App1 {
->>>>>>> e9a99952e48a2e2cd1b29f8ef2a8bd88ea30d9c8
-  background-color: #b19cc7;
-}
-
-.App1 {
-<<<<<<< HEAD
   background-color: #FFC648;
 }
 
@@ -62,20 +43,15 @@
   background-color: #000;
 }
 
-
-=======
-  background-color: #b19cc7;
+.coverpage {
+  font-family: "Circular Black", "sans-serif";
+  float: center;
+  width: 70%;
+  color: #ffda37;
+  font-size: 48px;
+  line-height: 60px;
 }
 
-.App1 {
-  background-color: #b19cc7;
-}
-
-.App6 {
-  background-color: rgb(236, 81, 107);
-}
-
->>>>>>> e9a99952e48a2e2cd1b29f8ef2a8bd88ea30d9c8
 .title {
   font-family: "Circular Black", "sans-serif";
   color: #ffda37;
