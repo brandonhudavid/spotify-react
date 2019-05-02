@@ -93,6 +93,11 @@ class App extends React.Component {
           console.log(err)
         }
       })
+      this.getArtistsToMarry();
+      this.getArtistLetters();
+      this.getMusicalKey();
+      this.getPrime();
+      this.calculateExplicit();
       this.renderCategory(this.state.category);
     }
   }
@@ -123,131 +128,149 @@ class App extends React.Component {
   }
 
 
-  async artistsToMarry() {
-    if (this.artistsToMarryRes.length > 0) {
-      this.setState({
-        results: this.artistsToMarryRes,
-        artistImage: this.artistImages[0]
-      })
-    } else {
-      await this.spotifyClient.getMyTopArtists({limit:5}, (err, val) => {
-          if (!err) {
-            var artists = [];
-            for (var i=0; i < val.items.length; i++) {
-              artists.push(val.items[i].name);
-            }
-            this.artistsToMarryRes = artists;
-            this.setState({
-              results: artists
-            });
-          } else {
-              console.log(err);
-          }
-          this.topTrackArtistURL = val.items[0].images[0].url;
-          this.artistImages[0] = this.topTrackArtistURL;
-          this.setState({
-            results: artists, 
-            artistImage: this.topTrackArtistURL,
-          });
+  async getArtistsToMarry() {
+    await this.spotifyClient.getMyTopArtists({limit:5}, (err, val) => {
+      if (!err) {
+        var artists = [];
+        for (var i=0; i < val.items.length; i++) {
+          artists.push(val.items[i].name);
         }
-    )};
+        this.artistsToMarryRes = artists;
+        this.topTrackArtistURL = val.items[0].images[0].url;
+        this.artistImages[0] = this.topTrackArtistURL;
+        if (this.state.category == 1) {
+          this.setState({
+            results: this.artistsToMarryRes,
+            artistImage: this.artistImages[0]
+          })
+        }
+      } else {
+          console.log(err);
+      }
+    })
   }
- 
-  async artistLetters() {
-    if (this.artistLettersRes.length > 0) {
-      this.setState({
-        results: this.artistLettersRes,
-        artistImage: this.artistImages[1]
-      })
-    } else {
-      const letter = this.display_name.substring(0, 1);
-      console.log(letter)
-      await this.spotifyClient.searchArtists(letter, {limit:50}, (err, val) => {
-          if (!err) {
-              var artistsArr = [];
-              var i;
-              for (i = 0; i < 50; i++) {
-                  let artistLetter = val.artists.items[i].name.substring(0,1).toLowerCase();
-                  let letterLetter = letter.toLowerCase();
-                  if (artistLetter === letterLetter) {
-                      artistsArr.push(val.artists.items[i].name);
-                      this.letterimage = val.artists.items[i].images[0].url;
-                      if (artistsArr.length == 5) {
-                        break;
-                      }
+
+  artistsToMarry() {
+    if (!(this.artistsToMarryRes.length > 0)) {
+      this.getArtistsToMarry();
+    }
+    this.setState({
+      results: this.artistsToMarryRes,
+      artistImage: this.artistImages[0]
+    })
+  }
+
+  async getArtistLetters() {
+    const letter = this.display_name.substring(0, 1);
+    await this.spotifyClient.searchArtists(letter, {limit:50}, (err, val) => {
+      if (!err) {
+          var artistsArr = [];
+          var i;
+          for (i = 0; i < 50; i++) {
+              let artistLetter = val.artists.items[i].name.substring(0,1).toLowerCase();
+              let letterLetter = letter.toLowerCase();
+              if (artistLetter === letterLetter) {
+                  artistsArr.push(val.artists.items[i].name);
+                  this.letterimage = val.artists.items[i].images[0].url;
+                  if (artistsArr.length == 5) {
+                    break;
                   }
               }
-
-              this.artistImages[1] = this.letterimage;
-              this.setState({
-                results: artistsArr,
-                artistImage: this.letterimage,
-              })
-          } else {
-              console.log(err);
           }
-      })
+          this.artistLettersRes = artistsArr;
+          this.artistImages[1] = this.letterimage;
+          if (this.state.category == 2) {
+            this.setState({
+              results: this.artistLettersRes,
+              artistImage: this.artistImages[1]
+            })
+          }
+      } else {
+          console.log(err);
+      }
+    })
+  }
+ 
+  artistLetters() {
+    if (!(this.musicalKeyRes.length > 0)) {
+      this.getArtistLetters();
     }
+    this.setState({
+      results: this.artistLettersRes,
+      artistImage: this.artistImages[1]
+    })
   }
 
-  async musicalKey() {
-    if (this.musicalKeyRes.length > 0) {
-      this.setState({
-        results: this.musicalKeyRes,
-        artistImage: this.artistImages[3]
-      })
-    } else {
-      await this.spotifyClient.getAudioFeaturesForTrack(this.topTracks[0], (err, val) => {
-          if (!err) {
-            console.log(val)
-            var key = val.key
-            var dance = val.danceability
-            var energy = val.energy
-            var pitch = ['C', 'C#/D♭', 'D', 'D#/E♭', 'E', 'F',' F♯/G♭', 'G', 'G♯/A♭', 'A', 'A♯/B♭', 'B']
+  async getMusicalKey() {
+    await this.spotifyClient.getAudioFeaturesForTrack(this.topTracks[0], (err, val) => {
+      if (!err) {
+        console.log(val)
+        var key = val.key
+        var dance = val.danceability
+        var energy = val.energy
+        var pitch = ['C', 'C#/D♭', 'D', 'D#/E♭', 'E', 'F',' F♯/G♭', 'G', 'G♯/A♭', 'A', 'A♯/B♭', 'B']
 
-            var musicalArr = ["Your Top Song: " + this.topTrackName + ' by ' + this.topTrackArtist, "Key: " + pitch[key], "Danceability: " + dance, "Energy: " + energy]
-            this.artistImages[3] = this.topTrackAlbum;
+        var musicalArr = ["Your Top Song: " + this.topTrackName + ' by ' + this.topTrackArtist, "Key: " + pitch[key], "Danceability: " + dance, "Energy: " + energy]
+        this.musicalKeyRes = musicalArr;
+        this.artistImages[3] = this.topTrackAlbum;
+          if (this.state.category == 4) {
             this.setState({
-              results: musicalArr, 
-              artistImage: this.topTrackAlbum,
+              results: this.musicalKeyRes,
+              artistImage: this.artistImages[3]
             })
-          } else {
-              console.log(err);
           }
-      })
+      } else {
+          console.log(err);
+      }
+    })
+  }
+
+  musicalKey() {
+    if (!(this.musicalKeyRes.length > 0)) {
+      this.getMusicalKey();
     }
+    this.setState({
+      results: this.musicalKeyRes,
+      artistImage: this.artistImages[3]
+    })
+  }
+
+  async getPrime() {
+    await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
+      if (!err) {
+          var primeSongs = [];
+          var image = ''
+          var i;
+          for (i = 0; i < val.total; i++) {
+              var songLength = Math.round(val.items[i].duration_ms / 1000);
+              if (this.isPrime(songLength)) {
+                primeSongs.push(val.items[i].name + " (" + this.secondsToMinutes(songLength) + ")");
+          
+              }
+              if (primeSongs.length >= 5) {
+                  break;
+              }
+          }
+          this.primeSongsRes = primeSongs;
+          if (this.state.category == 3) {
+            this.setState({
+              results: this.primeSongsRes,
+              artistImage: ""
+            })
+          }
+        } else {
+            console.log(err);
+        }
+    })
   }
   
-  async searchPrime() {
-    if (this.primeSongsRes.length > 0) {
-      this.setState({
-        results: this.primeSongsRes
-      })
-    } else {
-    await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
-        if (!err) {
-            var primeSongs = [];
-            var image = ''
-            var i;
-            for (i = 0; i < val.total; i++) {
-                var songLength = Math.round(val.items[i].duration_ms / 1000);
-                if (this.isPrime(songLength)) {
-                  primeSongs.push(val.items[i].name + " (" + this.secondsToMinutes(songLength) + ")");
-            
-                }
-                if (primeSongs.length >= 5) {
-                    break;
-                }
-            }
-            this.setState({
-              results: primeSongs, 
-              artistImage: '',
-            })
-          } else {
-              console.log(err);
-          }
-      })
+  searchPrime() {
+    if (!(this.primeSongsRes.length > 0)) {
+      this.getPrime();
     }
+    this.setState({
+      results: this.primeSongsRes
+    })
   }
 
   isPrime(num) {
@@ -262,13 +285,8 @@ class App extends React.Component {
       return prime;
   }
 
-  async howExplicit() {
-    if (this.howExplicitRes.length > 0) {
-      this.setState({
-        results: this.howExplicitRes
-      })
-    } else {
-      var count = 0;
+  async calculateExplicit() {
+    var count = 0;
       await this.spotifyClient.getMyTopTracks({limit: 50}, (err, val) => {
           if (!err) {
               var i;
@@ -278,17 +296,26 @@ class App extends React.Component {
                   }
               }
               this.howExplicitRes = [count*2];
-              console.log("howExplicitRes: " + this.howExplicitRes);
-              this.setState({
-                results: this.howExplicitRes,
-                artistImage: ''
-              })
+              if (this.state.category == 5) {
+                this.setState({
+                  results: this.howExplicitRes
+                })
+              }
           } else {
               console.log(err);
           }
       })
-    }
   }
+
+  howExplicit() {
+    if (!(this.howExplicitRes.length > 0)) {
+      this.calculateExplicit();
+    }
+    this.setState({
+      results: this.howExplicitRes
+    })
+  }
+
   async tedTalk() {
     this.setState({results: [<img src = "https://lh3.google.com/u/0/d/1DUT0VRTAihNdeZh38Gne4bAY-cKfFSDk=w2880-h1532-iv1" />]})
   }
