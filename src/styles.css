@@ -14,7 +14,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  height: 150vh;
+  height: 100vh;
   width: 100vw;
   background-color: #b19cc7;
 }
@@ -47,7 +47,8 @@
   font-family: "Circular Black", "sans-serif";
   vertical-align: center;
   display: flex;
-  margin-top: 60px;
+  margin-top: 80px;
+  margin-bottom: 40px;
   /* align-items: center; */
   justify-content: center;
   color: #ffda37;
@@ -57,6 +58,10 @@
 
 .coverchild {
   width: 70%;
+}
+
+.loginbutton {
+  font-family: "Circular Black", "sans-serif";
 }
 
 .title {
