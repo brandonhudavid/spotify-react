@@ -19,7 +19,6 @@ import LabelElement from "./LabelElement";
 
 import "./styles.css";
 import { bigIntLiteral } from "@babel/types";
-import { ReactComponent as LeftArrow } from '../src/left-arrow.png';
 
 
 
@@ -39,6 +38,8 @@ class App extends React.Component {
     this.guessArr = [];
     this.topTrackArtistURL = '';
     this.topTrackAlbum = '';
+    this.letterimage = '';
+    this.artistImages = ['', '', '', '', '', ''];
     this.state = {
       authenticated: false,
       category: 1,
@@ -143,7 +144,7 @@ class App extends React.Component {
               console.log(err);
           }
           this.topTrackArtistURL = val.items[0].images[0].url;
-          artists.push(<img src={this.topTrackArtistURL} />)
+          this.artistImages[0] = this.topTrackArtistURL;
           this.setState({
             results: artists, 
             artistImage: this.topTrackArtistURL,
@@ -163,22 +164,23 @@ class App extends React.Component {
       await this.spotifyClient.searchArtists(letter, {limit:50}, (err, val) => {
           if (!err) {
               var artistsArr = [];
-              var image = ''
               var i;
               for (i = 0; i < 50; i++) {
                   let artistLetter = val.artists.items[i].name.substring(0,1).toLowerCase();
                   let letterLetter = letter.toLowerCase();
                   if (artistLetter === letterLetter) {
                       artistsArr.push(val.artists.items[i].name);
-                      image = val.artists.items[i].images[0].url;
+                      this.letterimage = val.artists.items[i].images[0].url;
                       if (artistsArr.length == 5) {
                         break;
                       }
                   }
               }
+
+              this.artistImages[1] = this.letterimage;
               this.setState({
                 results: artistsArr,
-                artistImage: image,
+                artistImage: this.letterimage,
               })
           } else {
               console.log(err);
@@ -202,6 +204,7 @@ class App extends React.Component {
             var pitch = ['C', 'C#/D♭', 'D', 'D#/E♭', 'E', 'F',' F♯/G♭', 'G', 'G♯/A♭', 'A', 'A♯/B♭', 'B']
 
             var musicalArr = ["Your Top Song: " + this.topTrackName + ' by ' + this.topTrackArtist, "Key: " + pitch[key], "Danceability: " + dance, "Energy: " + energy]
+            this.artistImages[3] = this.topTrackAlbum;
             this.setState({
               results: musicalArr, 
               artistImage: this.topTrackAlbum,
@@ -285,7 +288,7 @@ class App extends React.Component {
     }
   }
   async tedTalk() {
-    this.setState({results: []})
+    this.setState({results: [<img src = "https://lh3.google.com/u/0/d/1DUT0VRTAihNdeZh38Gne4bAY-cKfFSDk=w2880-h1532-iv1" />]})
   }
 
   secondsToMinutes(x) {
@@ -378,10 +381,21 @@ class App extends React.Component {
         </div>
       )
     }
-    return (<ul>{this.state.results.map(result =>
-    <li>{result}</li>)}
-    <img src = {this.state.artistImage}/>
-    </ul>
+    return (
+    <div class="ui grid">
+      <div class="two column row">
+        <div class="column">
+          <ul>{this.state.results.map(result =>
+            <li>{result}</li>)}
+          </ul>
+        </div>
+        <div class="column">
+          {/* <img src = {this.state.artistImage} width={250} style={{verticalAlign: "left"}}/> */}
+          <img src = {this.artistImages[this.state.category]} width={250} style={{verticalAlign: "left"}}/>
+        </div>
+      </div>
+
+    </div>
     
     )
   }
@@ -419,13 +433,13 @@ class App extends React.Component {
       case 2:
         return "Artists With The Same First Letter Of Your First Name";
       case 3:
-        return "Prime Songs";
+        return "Songs You Listened To That Are A Prime Number Of Seconds In Length";
       case 4:
         return "Musical Information You Didn't Need To Know But Here It Is Anyways";
       case 5:
         return "How Explicit Are You?";
       case 6:
-        return "Thanks for coming to our Ted Talk. Hope you learned something about your listening! - Brandon & Megan";
+        return " ";
       default:
         break;
     }
@@ -450,7 +464,7 @@ class App extends React.Component {
       );
     }
     return (
-      <div className="App">
+      <div className={"App App" + this.state.category}>
       <div className="ui container">
         <div className="left arrow" onClick={() => {
           console.log("left arrow clicked");
@@ -474,10 +488,10 @@ class App extends React.Component {
           <img src = {"https://lh3.google.com/u/0/d/1MFEpOZARuWjANKEYN50btH2Q_ol_oPJq=w2120-h1532-iv1"} width="30" alt="right arrow"/>
         </div>
         <div style={{height: 100 + 'px'}} />
-        <div className="title">
+        <div className={"title title" + this.state.category}>
           {this.renderTitle()}
         </div>
-        <div className="results">
+        <div className={"results results" + this.state.category}>
           {this.renderResults()}
       </div>
       </div>

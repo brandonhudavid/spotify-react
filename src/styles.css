@@ -14,16 +14,71 @@
   position: absolute;
   top: 0;
   left: 0;
-  height: 100vh;
+  height: 150vh;
   width: 100vw;
   background-color: #b19cc7;
 }
 
+.App1 {
+  background-color: #FFC648;
+}
+
+.App2 {
+  background-color: #B997C6;
+}
+
+.App3 {
+  background-color: #97C4D5;
+}
+
+.App4 {
+  background-color: #9A1A32;
+}
+
+.App5 {
+  background-color: #FAC6CF;
+}
+
+.App6 {
+  background-color: #000;
+}
+
+
 .title {
   font-family: "Circular Black", "sans-serif";
-  color: #fff865;
+  color: #ffda37;
   font-size: 48px;
   line-height: 60px;
+}
+
+.title1 {
+  color: #fff;
+  font-size: 48px;
+}
+
+.title2 {
+  color: #553559;
+  font-size: 48px;
+}
+
+.title3 {
+  color:#fff;
+  font-size: 48px;
+}
+
+.title4 {
+  color:#FBD3D2;
+  font-size: 48px;
+}
+
+.title5 {
+  color:#fff;
+  font-size: 48px;
+}
+
+.title6 {
+  color:#44B649;
+  font-size: 48px;
 }
 
 .results {
@@ -31,6 +86,31 @@
   color: #fff865;
   font-size: 24px;
 }
+
+.results1 {
+  color: #fff;
+}
+
+.results2 {
+  color: #553559;
+}
+
+.results3 {
+  color:#fff;
+}
+
+.results4 {
+  color:#FBD3D2;
+}
+
+.results5 {
+  color:#fff;
+}
+
+.results6 {
+  color:#44B649;
+}
+
   
 .arrow {
   position: absolute;
