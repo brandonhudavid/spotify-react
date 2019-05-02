@@ -40,7 +40,12 @@ class App extends React.Component {
     this.topTrackAlbum = '';
     this.letterimage = '';
     this.artistImages = ['', '', '', '', '', ''];
+<<<<<<< HEAD
     this.redirect_uri = "http://localhost:8888/callback/";
+=======
+    this.redirect_uri = "";
+    
+>>>>>>> 19958b2b03b14b01172600421898f755cd309c34
     this.state = {
       authenticated: false,
       category: 1,
@@ -454,7 +459,7 @@ class App extends React.Component {
             When You Open Your Spotify Application On Your Mobile Device Or Desktop And You Choose To Listen To Your Favorite Music, What Does Said Music Say About You
           </div>
           <a
-            href={`https://accounts.spotify.com/authorize/?client_id=ac9ec319b658424d8aa1e41317e7c70f&response_type=token&redirect_uri=${this.redirect_uri}&scope=user-read-playback-state user-modify-playback-state user-top-read user-read-private`}
+            href={`https://accounts.spotify.com/authorize/?client_id=390641f619b14b1581aaadd96df6bbb8&response_type=token&redirect_uri=http://localhost:3000/callback/&scope=user-read-playback-state user-modify-playback-state user-top-read user-read-private`}
           >
             Login with Spotify
           </a>

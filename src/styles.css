@@ -14,8 +14,26 @@
   position: absolute;
   top: 0;
   left: 0;
+<<<<<<< HEAD
   height: 150vh;
   width: 100vw;
+=======
+  height: auto;
+  width: 100%;
+  /* background-color: #b19cc7; */
+  background-repeat: repeat;
+}
+
+.App1 {
+  background-color: #b19cc7;
+}
+
+.App1 {
+  background-color: #b19cc7;
+}
+
+.App1 {
+>>>>>>> 19958b2b03b14b01172600421898f755cd309c34
   background-color: #b19cc7;
 }
 
