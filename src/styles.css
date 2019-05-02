@@ -64,16 +64,29 @@
   font-family: "Circular Black", "sans-serif";
 }
 
+.image1 {
+  width: 40px;
+  margin-top: -180px;
+  margin-left: 30px;
+  /* align-items: center; */
+  justify-content: center;
+ 
+}
+
 .title {
   font-family: "Circular Black", "sans-serif";
   color: #ffda37;
   font-size: 48px;
   line-height: 60px;
 }
+/* -webkit-text-stroke-width: 1px;
+   -webkit-text-stroke-color: black; */
 
 .title1 {
   color: #fff;
-  font-size: 48px;
+  text-align: left;
+  font-size: 64px;
+  width: 60%;
 }
 
 .title2 {
@@ -109,6 +122,8 @@
 
 .results1 {
   color: #fff;
+  text-align: left;
+  margin-left: -30px;
 }
 
 .results2 {

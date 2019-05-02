@@ -393,7 +393,9 @@ class App extends React.Component {
         </div>
         <div class="column">
           {/* <img src = {this.state.artistImage} width={250} style={{verticalAlign: "left"}}/> */}
-          <img src = {this.artistImages[this.state.category-1]} width={250} style={{verticalAlign: "left"}}/>
+          <div className = {"image" + this.state.category}>
+          <img src = {this.artistImages[this.state.category-1]} width={400} />
+          </div>
         </div>
       </div>
 
@@ -412,7 +414,6 @@ class App extends React.Component {
         break;
       case 3:
         this.searchPrime();
-
         break;
       case 4:
         this.musicalKey();
@@ -431,7 +432,7 @@ class App extends React.Component {
   renderTitle() {
     switch(this.state.category) {
       case 1:
-        return "Artists You Should Consider Marrying";
+        return "Artists You Should Highly Consider Marrying";
       case 2:
         return "Artists With The Same First Letter Of Your First Name";
       case 3:
@@ -493,7 +494,9 @@ class App extends React.Component {
         </div>
         <div style={{height: 100 + 'px'}} />
         <div className={"title title" + this.state.category}>
-          {this.renderTitle()}
+          <div className={"titlechild"}>
+            {this.renderTitle()}
+          </div>
         </div>
         <div className={"results results" + this.state.category}>
           {this.renderResults()}
